@@ -59,8 +59,10 @@ if [[ $updateAvailable == "No new software available." ]]; then
     /bin/launchctl kickstart -k system/com.apple.softwareupdated
     sleep 2
     sudo softwareupdate -lr
+    exit 1
 else
     echo "Updates are available"
     runAsUser osascript -e 'display dialog "Your computer has pending updates. Please Restart at your earliest convenience" with title "An update is available for your Mac" buttons {"Got it!"} default button 1'
     runAsUser open "x-apple.systempreferences:com.apple.preferences.softwareupdate"
+    exit 0
 fi
