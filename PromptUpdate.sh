@@ -62,7 +62,7 @@ if [[ $updateAvailable == "No new software available." ]]; then
     exit 1
 else
     echo "Updates are available"
-    runAsUser osascript -e 'display dialog "Your computer has pending updates. Please Restart at your earliest convenience" with title "An update is available for your Mac" buttons {"Got it!"} default button 1'
+    runAsUser osascript -e 'display dialog "This computer needs to restart to finish installing important updates. Please restart at your earliest convenience." with title "Restart Required" buttons {"Got it!"} default button 1'
     runAsUser open "x-apple.systempreferences:com.apple.preferences.softwareupdate"
     exit 0
 fi
