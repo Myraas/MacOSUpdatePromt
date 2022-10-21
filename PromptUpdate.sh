@@ -33,12 +33,6 @@ runAsUser() {
   fi
 }
 
-# Get uptime (days)
-uptimeOutput=$(uptime)
-[ "${uptimeOutput/day/}" != "${uptimeOutput}" ] && uptimeDays=$(awk -F "up | day" '{print $2}' <<< "${uptimeOutput}")
-#less than a day echo 0
-echo "<result>${uptimeDays:-0}</result>"
-
 MAX_DAYS=7
 
 # Uptime >7 days, please reboot for system stability.
@@ -46,15 +40,12 @@ uptimeDays=$(uptime| grep -Eo '([0-9]+) day' | cut -d ' ' -f 1)
 if [ -z "$uptimeDays" ]; then
         uptimeHours=$(uptime | sed 's/.*up \([^,]*\), .*/\1/')
         echo "up for $uptimeHours (updated at `date`)"
-		runAsUser osascript -e 'display dialog "This computer has not rebooted in '${uptimeDays}' days, which could impact pending updates or stability. To keep this computer running optimally, a system reboot is recommended." with title "Computer Uptime Warning" buttons {"Got it!"} default button 1'
+	runAsUser osascript -e 'display dialog "This computer has not rebooted in '${uptimeDays}' days, which could impact pending updates or stability. To keep this computer running optimally, a system reboot is recommended." with title "Computer Uptime Warning" buttons {"Got it!"} default button 1'
 fi
 
 if [ "${uptimeDays}" -lt ${MAX_DAYS} ]; then
         echo "$uptimeDays days since last reboot (updated at `date`)"
 fi
-
-echo "$uptimeDays days since last reboot (updated at `date`)"
-
 
 #Set variable to check update status
 updateAvailable=`2>&1 softwareupdate -lr | grep -i "No new software available." | tail -1`
@@ -69,7 +60,7 @@ if [[ $updateAvailable == "No new software available." ]]; then
     sleep 2
     sudo softwareupdate -lr
 else
-    echo "Looks like softwareudpate is OK"
+    echo "Updates are available"
     runAsUser osascript -e 'display dialog "Your computer has pending updates. Please Restart at your earliest convenience" with title "An update is available for your Mac" buttons {"Got it!"} default button 1'
     runAsUser open "x-apple.systempreferences:com.apple.preferences.softwareupdate"
 fi
